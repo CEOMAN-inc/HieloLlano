@@ -1,14 +1,14 @@
 from pydantic import BaseModel, EmailStr
 
 class UserCreate(BaseModel):
-    username: str
+    first_name: str
+    last_name: str
     email: EmailStr
     password: str
+    role: int
 
 class UserOut(BaseModel):
-    id: int
-    username: str
+    first_name: str
+    last_name: str
     email: EmailStr
-
-    class Config:
-        orm_mode = True
+    role: int
