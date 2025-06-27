@@ -4,7 +4,8 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Instalar dependencias directamente
-RUN pip install --no-cache-dir fastapi uvicorn[standard]
+RUN pip install --no-cache-dir fastapi uvicorn[standard] python-jose[cryptography] passlib[bcrypt]
+
 
 # Copiar el código fuente
 COPY ./backend/app ./app
