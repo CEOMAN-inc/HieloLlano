@@ -7,7 +7,7 @@ WORKDIR /app
 COPY ./backend /app
 
 # Instalar dependencias directamente
-RUN pip install --no-cache-dir fastapi uvicorn psycopg2-binary python-dotenv pydantic[email] passlib[bcrypt]
+RUN pip install --no-cache-dir fastapi uvicorn psycopg2-binary python-dotenv pydantic[email] passlib[bcrypt] python-jose[cryptography] python-multipart bcrypt==3.2.0
 
 # Exponer el puerto de la aplicación
 EXPOSE 8000
