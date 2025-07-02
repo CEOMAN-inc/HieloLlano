@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from app.schemas.user import UserCreate, UserOut
 from app.services.auth import create_user
 from fastapi.security import OAuth2PasswordRequestForm
-from app.utils.security import create_access_token
+from app.utils.security import create_access_token, get_current_user
 from app.services.auth import authenticate_user
 import logging
 
@@ -26,3 +26,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
         raise HTTPException(status_code=401, detail="Credenciales inválidas")
     token = create_access_token(data={"sub": user["email"], "role": user["role"]})
     return {"access_token": token, "token_type": "bearer"}
+
+@router.get("/me", response_model=UserOut)
+def get_me(current_user: dict = Depends(get_current_user)):
+    return current_user
