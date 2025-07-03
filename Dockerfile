@@ -13,5 +13,5 @@ RUN pip install --no-cache-dir fastapi uvicorn psycopg2-binary python-dotenv pyd
 EXPOSE 8000
 
 # Comando para correr la app con recarga automática (dev)
-#CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
-CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+#CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT #Comando para cuando se va a desplegar en google cloud run
