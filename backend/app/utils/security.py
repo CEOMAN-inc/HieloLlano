@@ -44,7 +44,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
-        role: str = payload.get("role")
+        role: str = payload.get("rol_id")
         if email is None:
             raise credentials_exception
     except JWTError:
@@ -55,7 +55,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     cursor = conn.cursor()
     try:
         cursor.execute("""
-            SELECT id_usuario, first_name, last_name, correo_usuario, rol
+            SELECT id_usuario, first_name, last_name, correo_usuario, rol_id
             FROM users WHERE correo_usuario = %s AND estado = TRUE
         """, (email,))
         row = cursor.fetchone()
@@ -65,7 +65,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
                 "first_name": row[1],
                 "last_name": row[2],
                 "email": row[3],
-                "role": row[4]
+                "rol_id": row[4]
             }
         raise credentials_exception
     finally:

@@ -24,7 +24,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(status_code=401, detail="Credenciales inválidas")
-    token = create_access_token(data={"sub": user["email"], "role": user["role"]})
+    token = create_access_token(data={"sub": user["email"], "role": user["role_name"]})
     return {"access_token": token, "token_type": "bearer"}
 
 @router.get("/me", response_model=UserOut)

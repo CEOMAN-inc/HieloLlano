@@ -5,10 +5,11 @@ class UserCreate(BaseModel):
     last_name: str
     email: EmailStr
     password: str
-    role: int
+    rol_id: int
 
 class UserOut(BaseModel):
+    id: int
     first_name: str
     last_name: str
     email: EmailStr
-    role: int
+    rol_id: int

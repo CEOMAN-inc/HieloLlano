@@ -9,10 +9,10 @@ def create_user(user: UserCreate):
     try:
         hashed_pw = hash_password(user.password)
         cursor.execute("""
-            INSERT INTO users (first_name, last_name, correo_usuario, hashed_password, estado, rol)
+            INSERT INTO users (first_name, last_name, correo_usuario, hashed_password, estado, rol_id)
             VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING id_usuario
-        """, (user.first_name, user.last_name, user.email, hashed_pw, True, user.role))
+        """, (user.first_name, user.last_name, user.email, hashed_pw, True, user.role_id))
 
         user_id = cursor.fetchone()[0]
 
@@ -22,7 +22,7 @@ def create_user(user: UserCreate):
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email": user.email,
-            "role": user.role
+            "role_id": user.role_id
         }
 
     except psycopg2.IntegrityError:
@@ -37,8 +37,11 @@ def authenticate_user(email: str, password: str):
     cursor = conn.cursor()
     try:
         cursor.execute("""
-            SELECT id_usuario, first_name, last_name, correo_usuario, hashed_password, estado, rol
-            FROM users WHERE correo_usuario = %s
+            select u.id_usuario, u.first_name, u.last_name, u.correo_usuario, u.hashed_password, u.estado, r.rol_name 
+            from users u 
+            join roles r 
+            on u.rol_id = r.id 
+            where u.correo_usuario = %s
         """, (email,))
         row = cursor.fetchone()
         if row and row[5]:  # estado = True
@@ -49,7 +52,7 @@ def authenticate_user(email: str, password: str):
                     "first_name": first_name,
                     "last_name": last_name,
                     "email": correo_usuario,
-                    "role": rol
+                    "role_name": rol
                 }
         return None
     finally:
