@@ -12,7 +12,7 @@ def create_user(user: UserCreate):
             INSERT INTO users (first_name, last_name, correo_usuario, hashed_password, estado, rol_id)
             VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING id_usuario
-        """, (user.first_name, user.last_name, user.email, hashed_pw, True, user.role_id))
+        """, (user.first_name, user.last_name, user.email, hashed_pw, True, user.rol_id))
 
         user_id = cursor.fetchone()[0]
 
@@ -22,7 +22,7 @@ def create_user(user: UserCreate):
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email": user.email,
-            "role_id": user.role_id
+            "rol_id": user.rol_id
         }
 
     except psycopg2.IntegrityError:
@@ -40,7 +40,7 @@ def authenticate_user(email: str, password: str):
             select u.id_usuario, u.first_name, u.last_name, u.correo_usuario, u.hashed_password, u.estado, r.rol_name 
             from users u 
             join roles r 
-            on u.rol_id = r.id 
+            on u.rol_id = r.id_usuario 
             where u.correo_usuario = %s
         """, (email,))
         row = cursor.fetchone()
