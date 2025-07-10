@@ -27,7 +27,7 @@ def filtrar_campos_cliente(cliente: dict, rol_id: int):
             k: v for k, v in cliente.items()
             if k in [
                 "id", "name", "address", "email", "mobile", "city", "state",
-                "trade_name", "specific_type", "trade_name"
+                "trade_name", "specific_type"
             ]
         }
     }
