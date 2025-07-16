@@ -10,4 +10,4 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
-    role = Column(Integer, nullable=False)
+    rol_id = Column(Integer, nullable=False)

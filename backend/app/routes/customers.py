@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from app.utils.security import get_current_user
-from app.services.customers import consultar_clientes
+from app.services.customers import consultar_clientes, crear_cliente
+from fastapi import Body, HTTPException
 
 router = APIRouter()
 
@@ -13,3 +14,15 @@ def listar_clientes(
     user = Depends(get_current_user)
 ):
     return consultar_clientes(user, page, limit, contact_type, search)
+
+@router.post("/create")
+def crear_clientes(
+    customer: dict = Body(...),
+    user = Depends(get_current_user)
+):
+    try:
+        return crear_cliente(customer, user)
+    except PermissionError as e:
+        raise HTTPException(status_code=403, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error interno: {str(e)}")

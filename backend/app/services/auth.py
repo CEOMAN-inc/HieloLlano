@@ -40,7 +40,7 @@ def authenticate_user(email: str, password: str):
             select u.id_usuario, u.first_name, u.last_name, u.correo_usuario, u.hashed_password, u.estado, r.rol_name 
             from users u 
             join roles r 
-            on u.rol_id = r.id_usuario 
+            on u.rol_id = r.id
             where u.correo_usuario = %s
         """, (email,))
         row = cursor.fetchone()

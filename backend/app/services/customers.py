@@ -13,7 +13,7 @@ def filtrar_campos_cliente(cliente: dict, rol_id: int):
         ROLE_ADMIN: {
             k: v for k, v in cliente.items()
             if k not in ["identification","created_at", "updated_at", 
-                         "user_id_create", "user_id_update"]
+                        "user_id_create", "user_id_update"]
         },
         ROLE_SALES: {
             k: v for k, v in cliente.items()
@@ -64,7 +64,7 @@ def consultar_clientes(user, page: int = 1, limit: int = 10, contact_type: str =
     # Datos
     cursor.execute(f"""
         SELECT c.*, 
-               u.first_name || ' ' || u.last_name AS managed_by_name
+            u.first_name || ' ' || u.last_name AS managed_by_name
         FROM customers c
         LEFT JOIN users u ON c.user_id_create = u.id_usuario
         {where}
@@ -94,3 +94,47 @@ def consultar_clientes(user, page: int = 1, limit: int = 10, contact_type: str =
         "limit": limit,
         "data": data
     }
+
+def crear_cliente(data: dict, user: dict):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    if user["rol_id"] not in [ROLE_SUPER_ADMIN, ROLE_ADMIN]:
+        cursor.close()
+        conn.close()
+        raise PermissionError("No tienes permisos para crear clientes.")
+
+    query = """
+        INSERT INTO customers (
+            name, identification, contact_type, address, city, state,
+            country, associated_company_id, email, mobile, trade_name,
+            specific_type, portal_visibility, user_id_create
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        RETURNING id
+    """
+
+    values = [
+        data.get("name"),
+        data.get("identification"),
+        data.get("contact_type"),
+        data.get("address"),
+        data.get("city"),
+        data.get("state"),
+        data.get("country"),
+        data.get("associated_company_id"),
+        data.get("email"),
+        data.get("mobile"),
+        data.get("trade_name"),
+        data.get("specific_type"),
+        data.get("portal_visibility"),
+        user.get("id")
+    ]
+
+    cursor.execute(query, values)
+    cliente_id = cursor.fetchone()[0]
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return {"id": cliente_id, "message": "Cliente creado exitosamente"}
