@@ -138,3 +138,25 @@ def crear_cliente(data: dict, user: dict):
     conn.close()
 
     return {"id": cliente_id, "message": "Cliente creado exitosamente"}
+
+def eliminar_cliente(customer_id: int, user: dict):
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        if user["rol_id"] not in [ROLE_SUPER_ADMIN, ROLE_ADMIN]:
+            raise PermissionError("No tienes permisos para eliminar clientes.")
+
+        cursor.execute("SELECT * FROM customers WHERE id = %s", (customer_id,))
+        cliente = cursor.fetchone()
+
+        if not cliente:
+            raise ValueError("Cliente no encontrado")
+
+        cursor.execute("DELETE FROM customers WHERE id = %s", (customer_id,))
+        conn.commit()
+
+        return {"message": "Cliente eliminado exitosamente"}
+    
+    finally:
+        cursor.close()
+        conn.close()
